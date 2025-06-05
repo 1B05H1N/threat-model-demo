@@ -1,0 +1,52 @@
+@startuml
+actor actor_User_acf3059e70 as "User"
+entity process_FlaskApp_d2006ce1bb as "Flask App"
+database datastore_PostgreSQL_f8af758679 as "PostgreSQL"
+entity process_CSRFProtection_2c440ebe53 as "CSRF Protection"
+entity process_RateLimiter_0291419f72 as "Rate Limiter"
+entity process_AuthManager_c76a0a7067 as "Auth Manager"
+
+actor_User_acf3059e70 -> process_FlaskApp_d2006ce1bb: HTTPS GET /
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 200 OK
+actor_User_acf3059e70 -> process_CSRFProtection_2c440ebe53: HTTPS POST /login
+process_CSRFProtection_2c440ebe53 -> process_RateLimiter_0291419f72: Validated Request
+process_RateLimiter_0291419f72 -> process_AuthManager_c76a0a7067: Rate Limited Request
+process_AuthManager_c76a0a7067 -> process_FlaskApp_d2006ce1bb: Authenticated Request
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 200 OK
+actor_User_acf3059e70 -> process_CSRFProtection_2c440ebe53: HTTPS POST /logout
+process_CSRFProtection_2c440ebe53 -> process_AuthManager_c76a0a7067: Validated Request
+process_AuthManager_c76a0a7067 -> process_FlaskApp_d2006ce1bb: Authenticated Request
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 200 OK
+actor_User_acf3059e70 -> process_CSRFProtection_2c440ebe53: HTTPS GET /dashboard
+process_CSRFProtection_2c440ebe53 -> process_AuthManager_c76a0a7067: Validated Request
+process_AuthManager_c76a0a7067 -> process_FlaskApp_d2006ce1bb: Authenticated Request
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 200 OK
+actor_User_acf3059e70 -> process_CSRFProtection_2c440ebe53: HTTPS GET /todos
+process_CSRFProtection_2c440ebe53 -> process_RateLimiter_0291419f72: Validated Request
+process_RateLimiter_0291419f72 -> process_AuthManager_c76a0a7067: Rate Limited Request
+process_AuthManager_c76a0a7067 -> process_FlaskApp_d2006ce1bb: Authenticated Request
+process_FlaskApp_d2006ce1bb -> datastore_PostgreSQL_f8af758679: Query
+datastore_PostgreSQL_f8af758679 -> process_FlaskApp_d2006ce1bb: Results
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 200 OK
+actor_User_acf3059e70 -> process_CSRFProtection_2c440ebe53: HTTPS POST /todos
+process_CSRFProtection_2c440ebe53 -> process_RateLimiter_0291419f72: Validated Request
+process_RateLimiter_0291419f72 -> process_AuthManager_c76a0a7067: Rate Limited Request
+process_AuthManager_c76a0a7067 -> process_FlaskApp_d2006ce1bb: Authenticated Request
+process_FlaskApp_d2006ce1bb -> datastore_PostgreSQL_f8af758679: Insert
+datastore_PostgreSQL_f8af758679 -> process_FlaskApp_d2006ce1bb: Confirmation
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 201 Created
+actor_User_acf3059e70 -> process_CSRFProtection_2c440ebe53: HTTPS PUT /todos/<id>
+process_CSRFProtection_2c440ebe53 -> process_RateLimiter_0291419f72: Validated Request
+process_RateLimiter_0291419f72 -> process_AuthManager_c76a0a7067: Rate Limited Request
+process_AuthManager_c76a0a7067 -> process_FlaskApp_d2006ce1bb: Authenticated Request
+process_FlaskApp_d2006ce1bb -> datastore_PostgreSQL_f8af758679: Update
+datastore_PostgreSQL_f8af758679 -> process_FlaskApp_d2006ce1bb: Confirmation
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 200 OK
+actor_User_acf3059e70 -> process_CSRFProtection_2c440ebe53: HTTPS DELETE /todos/<id>
+process_CSRFProtection_2c440ebe53 -> process_RateLimiter_0291419f72: Validated Request
+process_RateLimiter_0291419f72 -> process_AuthManager_c76a0a7067: Rate Limited Request
+process_AuthManager_c76a0a7067 -> process_FlaskApp_d2006ce1bb: Authenticated Request
+process_FlaskApp_d2006ce1bb -> datastore_PostgreSQL_f8af758679: Delete
+datastore_PostgreSQL_f8af758679 -> process_FlaskApp_d2006ce1bb: Confirmation
+process_FlaskApp_d2006ce1bb -> actor_User_acf3059e70: HTTPS 204 No Content
+@enduml
