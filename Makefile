@@ -12,7 +12,7 @@ model:
 # Extract PlantUML and Graphviz code and generate diagrams
 diagrams: model
 	awk '/@startuml/,/@enduml/' model_output.txt > sequence.puml
-	awk '/digraph tm {/,/}/' model_output.txt > dfd.dot
+	awk '/digraph tm {/,/^}/' model_output.txt > dfd.dot
 	plantuml sequence.puml
 	dot -Tpng dfd.dot -o dfd.png
 
