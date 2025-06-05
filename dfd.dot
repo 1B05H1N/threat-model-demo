@@ -58,6 +58,5 @@ digraph tm {
             label = "Auth Manager";
             margin = 0.02;
         ]
-
     }
 }
