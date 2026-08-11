@@ -60,9 +60,15 @@ def login():
     username = data['username']
     password = data['password']
 
+    admin_username = os.getenv('ADMIN_USERNAME')
+    admin_password = os.getenv('ADMIN_PASSWORD')
+    if not admin_username or not admin_password:
+        # Avoid passing None to generate_password_hash (raises TypeError -> 500)
+        return jsonify({'error': 'Server authentication is not configured'}), 500
+
     # In production, validate against database
-    if username == os.getenv('ADMIN_USERNAME') and check_password_hash(
-        generate_password_hash(os.getenv('ADMIN_PASSWORD')), password
+    if username == admin_username and check_password_hash(
+        generate_password_hash(admin_password), password
     ):
         session['user_id'] = username
         return jsonify({'message': 'Login successful'}), 200
